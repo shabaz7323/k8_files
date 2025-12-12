@@ -5,20 +5,25 @@ pipeline {
 apiVersion: v1
 kind: Pod
 spec:
-  serviceAccountName: default
   containers:
     - name: node
       image: node:18
-      command: ["cat"]
+      command: ['cat']
       tty: true
+
     - name: kaniko
       image: gcr.io/kaniko-project/executor:debug
-      command:
-        - cat
+      command: ['cat']
       tty: true
       volumeMounts:
         - name: kaniko-secret
           mountPath: /kaniko/.docker
+
+    - name: kubectl
+      image: bitnami/kubectl:latest
+      command: ['cat']
+      tty: true
+
   volumes:
     - name: kaniko-secret
       secret:
@@ -62,13 +67,13 @@ spec:
                 }
             }
         }
-stage('Deploy to Kubernetes') {
-    steps {
-        container('kubectl') {
-            sh 'kubectl rollout restart deployment shabaz'
-        }
-    }
-}
 
+        stage('Deploy to Kubernetes') {
+            steps {
+                container('kubectl') {
+                    sh 'kubectl rollout restart deployment shabaz'
+                }
+            }
+        }
     }
 }
