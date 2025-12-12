@@ -21,7 +21,7 @@ spec:
           mountPath: /kaniko/.docker
 
     - name: kubectl
-      image: lachlanevenson/k8s-kubectl:v1.27.3
+      image: bitnami/kubectl:latest
       command: ['cat']
       tty: true
 
@@ -80,10 +80,10 @@ spec:
 
     post {
         success {
-            echo "Pipeline successful! Deployment restarted."
+            echo "Pipeline successful! Deployment restarted 🎉"
         }
         failure {
-            echo "Pipeline failed. Check logs."
+            echo "Pipeline failed ❌"
         }
     }
 }
