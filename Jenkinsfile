@@ -1,11 +1,6 @@
 pipeline {
-    agent {
-        docker {
-            image 'node:18'
-            args '-u root:root'
-        }
-    }
-
+    agent any
+    
     stages {
 
         stage('Checkout') {
