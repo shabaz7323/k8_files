@@ -13,7 +13,10 @@ spec:
       command: ['cat']
       tty: true
 
+<<<<<<< HEAD
     # Kaniko container for Docker build & push
+=======
+>>>>>>> b8c8acf641e249b5e9a740a5f2ad606a8884f121
     - name: kaniko
       image: gcr.io/kaniko-project/executor:debug
       command: ['cat']
@@ -22,9 +25,14 @@ spec:
         - name: kaniko-secret
           mountPath: /kaniko/.docker
 
+<<<<<<< HEAD
     # Kubectl container for deployment
     - name: kubectl
       image: lachlanevenson/k8s-kubectl:v1.27.3
+=======
+    - name: kubectl
+      image: bitnami/kubectl:latest
+>>>>>>> b8c8acf641e249b5e9a740a5f2ad606a8884f121
       command: ['cat']
       tty: true
 
@@ -75,6 +83,7 @@ spec:
         stage('Deploy to Kubernetes') {
             steps {
                 container('kubectl') {
+<<<<<<< HEAD
                     sh "kubectl rollout restart deployment shabaz"
                 }
             }
@@ -87,6 +96,11 @@ spec:
         }
         failure {
             echo "❌ Pipeline failed. Check logs."
+=======
+                    sh 'kubectl rollout restart deployment shabaz'
+                }
+            }
+>>>>>>> b8c8acf641e249b5e9a740a5f2ad606a8884f121
         }
     }
 }
