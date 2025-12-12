@@ -4,39 +4,35 @@ pipeline {
             yaml """
 apiVersion: v1
 kind: Pod
-metadata:
-  labels:
-    app: jenkins-agent
 spec:
+  serviceAccountName: default
   containers:
     - name: node
       image: node:18
-      command:
-        - cat
+      command: ["cat"]
       tty: true
-    - name: docker
-      image: docker:24-git
+    - name: kaniko
+      image: gcr.io/kaniko-project/executor:debug
       command:
         - cat
       tty: true
       volumeMounts:
-        - name: docker-sock
-          mountPath: /var/run/docker.sock
+        - name: kaniko-secret
+          mountPath: /kaniko/.docker
   volumes:
-    - name: docker-sock
-      hostPath:
-        path: /var/run/docker.sock
+    - name: kaniko-secret
+      secret:
+        secretName: dockerhub-secret
 """
         }
     }
 
     environment {
-        DOCKER_HUB_USER = "shabaz7323"
-        IMAGE_NAME = "shabaz"
-        IMAGE_TAG = "latest"
+        IMAGE = "shabaz7323/shabaz:latest"
     }
 
     stages {
+
         stage('Checkout') {
             steps {
                 container('node') {
@@ -53,25 +49,16 @@ spec:
             }
         }
 
-        stage('Build Docker Image') {
+        stage('Build & Push Image with Kaniko') {
             steps {
-                container('docker') {
-                    sh 'docker build -t ${DOCKER_HUB_USER}/${IMAGE_NAME}:${IMAGE_TAG} .'
-                }
-            }
-        }
-
-        stage('Push Docker Image') {
-            steps {
-                container('docker') {
-                    withCredentials([usernamePassword(
-                        credentialsId: 'dockerhub-credentials',
-                        usernameVariable: 'DOCKER_USERNAME',
-                        passwordVariable: 'DOCKER_PASSWORD'
-                    )]) {
-                        sh 'echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin'
-                        sh 'docker push ${DOCKER_HUB_USER}/${IMAGE_NAME}:${IMAGE_TAG}'
-                    }
+                container('kaniko') {
+                    sh """
+                    /kaniko/executor \
+                      --dockerfile=Dockerfile \
+                      --context=`pwd` \
+                      --destination=$IMAGE \
+                      --verbosity=info
+                    """
                 }
             }
         }
@@ -83,4 +70,3 @@ spec:
         }
     }
 }
-
