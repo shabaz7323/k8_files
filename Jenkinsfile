@@ -7,16 +7,11 @@ kind: Pod
 spec:
   containers:
 
-    # Node container for npm install
     - name: node
       image: node:18
       command: ['cat']
       tty: true
 
-<<<<<<< HEAD
-    # Kaniko container for Docker build & push
-=======
->>>>>>> b8c8acf641e249b5e9a740a5f2ad606a8884f121
     - name: kaniko
       image: gcr.io/kaniko-project/executor:debug
       command: ['cat']
@@ -25,14 +20,8 @@ spec:
         - name: kaniko-secret
           mountPath: /kaniko/.docker
 
-<<<<<<< HEAD
-    # Kubectl container for deployment
     - name: kubectl
       image: lachlanevenson/k8s-kubectl:v1.27.3
-=======
-    - name: kubectl
-      image: bitnami/kubectl:latest
->>>>>>> b8c8acf641e249b5e9a740a5f2ad606a8884f121
       command: ['cat']
       tty: true
 
@@ -70,11 +59,11 @@ spec:
             steps {
                 container('kaniko') {
                     sh """
-                      /kaniko/executor \
-                        --dockerfile=Dockerfile \
-                        --context=`pwd` \
-                        --destination=$IMAGE \
-                        --verbosity=info
+                    /kaniko/executor \
+                      --dockerfile=Dockerfile \
+                      --context=`pwd` \
+                      --destination=$IMAGE \
+                      --verbosity=info
                     """
                 }
             }
@@ -83,7 +72,6 @@ spec:
         stage('Deploy to Kubernetes') {
             steps {
                 container('kubectl') {
-<<<<<<< HEAD
                     sh "kubectl rollout restart deployment shabaz"
                 }
             }
@@ -92,15 +80,10 @@ spec:
 
     post {
         success {
-            echo "🎉 Pipeline successful! Image pushed and deployment restarted."
+            echo "Pipeline successful! Deployment restarted."
         }
         failure {
-            echo "❌ Pipeline failed. Check logs."
-=======
-                    sh 'kubectl rollout restart deployment shabaz'
-                }
-            }
->>>>>>> b8c8acf641e249b5e9a740a5f2ad606a8884f121
+            echo "Pipeline failed. Check logs."
         }
     }
 }
