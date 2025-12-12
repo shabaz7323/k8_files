@@ -62,11 +62,13 @@ spec:
                 }
             }
         }
-
-        stage('Deploy to Kubernetes') {
-            steps {
-                sh 'kubectl rollout restart deployment shabaz'
-            }
+stage('Deploy to Kubernetes') {
+    steps {
+        container('kubectl') {
+            sh 'kubectl rollout restart deployment shabaz'
         }
+    }
+}
+
     }
 }
