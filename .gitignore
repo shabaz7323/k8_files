@@ -1,0 +1,8 @@
+# Ignore Windows system files
+AppData/
+*/AppData/
+AppData/Local/Docker/
+*.key
+*.pub
+Docker/pki/
+*.log

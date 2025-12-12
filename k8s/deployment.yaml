@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: shabaz
+  labels:
+    app: shabaz
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: shabaz
+  template:
+    metadata:
+      labels:
+        app: shabaz
+    spec:
+      containers:
+      - name: shabaz
+        image: shabaz7323/shabaz:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 3000
