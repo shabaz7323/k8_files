@@ -7,10 +7,11 @@ kind: Pod
 spec:
   containers:
 
-    - name: node
-      image: node:18
+    - name: kubectl
+      image: ubuntu:22.04
       command: ['cat']
       tty: true
+
 
     - name: kaniko
       image: gcr.io/kaniko-project/executor:debug
@@ -69,6 +70,7 @@ spec:
             }
         }
 
+<<<<<<< HEAD
         stage('Deploy to Kubernetes') {
             steps {
                 container('kubectl') {
@@ -79,7 +81,21 @@ spec:
                     """
                 }
             }
+=======
+       stage('Deploy to Kubernetes') {
+    steps {
+        container('kubectl') {
+            sh """
+                apt-get update && apt-get install -y curl
+                curl -LO "https://dl.k8s.io/release/\$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+                chmod +x kubectl
+                ./kubectl rollout restart deployment shabaz
+            """
+>>>>>>> b6a7458 (s)
         }
+    }
+}
+
     }
 
     post {
