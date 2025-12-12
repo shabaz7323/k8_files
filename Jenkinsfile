@@ -21,7 +21,7 @@ spec:
           mountPath: /kaniko/.docker
 
     - name: kubectl
-      image: bitnami/kubectl:latest
+      image: curlimages/curl:latest
       command: ['cat']
       tty: true
 
@@ -72,7 +72,11 @@ spec:
         stage('Deploy to Kubernetes') {
             steps {
                 container('kubectl') {
-                    sh "kubectl rollout restart deployment shabaz"
+                    sh """
+                       curl -LO "https://dl.k8s.io/release/\$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+                       chmod +x kubectl
+                       ./kubectl rollout restart deployment shabaz
+                    """
                 }
             }
         }
